@@ -2,30 +2,32 @@ package com.nhom1.polydeck.data.model;
 import com.google.gson.annotations.SerializedName;
 
 public class AdminStats {
-    @SerializedName("tong_nguoi_dung")
+    @SerializedName("tongNguoiDung")
     private int tongNguoiDung;
 
-    @SerializedName("tong_bo_tu")
+    @SerializedName("tongBoTu")
     private int tongBoTu;
 
-    @SerializedName("nguoi_hoat_dong")
+    @SerializedName("nguoiHoatDong")
     private int nguoiHoatDong;
 
-    @SerializedName("tong_tu_vung")
+    @SerializedName("tongTuVung")
     private int tongTuVung;
 
-    @SerializedName("ty_le_nguoi_dung")
+    // FIX: Added back the missing fields and methods
+    @SerializedName("tyLeNguoiDung")
     private String tyLeNguoiDung;
 
-    @SerializedName("ty_le_bo_tu")
+    @SerializedName("tyLeBoTu")
     private String tyLeBoTu;
 
-    @SerializedName("ty_le_hoat_dong")
+    @SerializedName("tyLeHoatDong")
     private String tyLeHoatDong;
-    @SerializedName("ty_le_tu_vung")
+    
+    @SerializedName("tyLeTuVung")
     private String tyLeTuVung;
-    public AdminStats() {}
 
+    // Getters and Setters
     public int getTongNguoiDung() { return tongNguoiDung; }
     public void setTongNguoiDung(int tongNguoiDung) { this.tongNguoiDung = tongNguoiDung; }
 
