@@ -1,20 +1,21 @@
 package com.nhom1.polydeck.ui.activity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
+import android.util.Log;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nhom1.polydeck.R;
 import com.nhom1.polydeck.data.api.APIService;
 import com.nhom1.polydeck.data.api.RetrofitClient;
@@ -28,112 +29,97 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DeckManagementActivity extends AppCompatActivity implements DeckAdapter.OnDeckClickListener {
+public class DeckManagementActivity extends AppCompatActivity {
 
-    private ImageView btnBack, btnAdd;
-    private EditText etSearch;
-    private TextView tvTotalDecks, tvPublished;
+    private static final String TAG = "DeckManagementActivity";
+
+    private Toolbar toolbar;
+    private EditText etSearchDeck;
     private RecyclerView rvDecks;
-    private ProgressBar progressBar;
-
+    private FloatingActionButton fabAddDeck;
+    private TextView tvDeckStats;
     private DeckAdapter deckAdapter;
-    private List<BoTu> deckList = new ArrayList<>();
-    private List<BoTu> filteredList = new ArrayList<>();
-
     private APIService apiService;
+    private List<BoTu> fullDeckList = new ArrayList<>(); // Store the full list for search restoration
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deck_management);
 
+        apiService = RetrofitClient.getApiService();
+
         initViews();
+        setupToolbar();
         setupRecyclerView();
-        setupAPI();
-        loadDecks();
-        setupSearchListener();
-    }
+        setupSearch();
 
-    private void initViews() {
-        btnBack = findViewById(R.id.btnBack);
-        btnAdd = findViewById(R.id.btnAdd);
-        etSearch = findViewById(R.id.etSearch);
-        tvTotalDecks = findViewById(R.id.tvTotalDecks);
-        tvPublished = findViewById(R.id.tvPublished);
-        rvDecks = findViewById(R.id.rvDecks);
-        progressBar = findViewById(R.id.progressBar);
-
-        btnBack.setOnClickListener(v -> finish());
-        btnAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(DeckManagementActivity.this, CreateDeckActivity.class);
+        fabAddDeck.setOnClickListener(v -> {
+            Intent intent = new Intent(DeckManagementActivity.this, AddDeckActivity.class);
             startActivity(intent);
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // FIX: Fetch data every time the activity is resumed to see changes
+        fetchDecks();
+    }
+
+    private void initViews(){
+        toolbar = findViewById(R.id.toolbar_deck_management);
+        etSearchDeck = findViewById(R.id.etSearchDeck);
+        rvDecks = findViewById(R.id.rvDecks);
+        fabAddDeck = findViewById(R.id.fabAddDeck);
+        tvDeckStats = findViewById(R.id.tvDeckStats);
+    }
+
+    private void setupToolbar(){
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
+
     private void setupRecyclerView() {
-        deckAdapter = new DeckAdapter(this, filteredList, this);
         rvDecks.setLayoutManager(new LinearLayoutManager(this));
+        deckAdapter = new DeckAdapter(this, new ArrayList<>());
         rvDecks.setAdapter(deckAdapter);
     }
 
-    private void setupAPI() {
-        apiService = RetrofitClient.getApiService();
-    }
-
-    private void loadDecks() {
-        showLoading(true);
-
-        apiService.getAllBoTu().enqueue(new Callback<List<BoTu>>() {
+    private void fetchDecks() {
+        apiService.getAllChuDe().enqueue(new Callback<List<BoTu>>() {
             @Override
-            public void onResponse(Call<List<BoTu>> call, Response<List<BoTu>> response) {
-                showLoading(false);
-
+            public void onResponse(@NonNull Call<List<BoTu>> call, @NonNull Response<List<BoTu>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    deckList.clear();
-                    deckList.addAll(response.body());
-
-                    filteredList.clear();
-                    filteredList.addAll(deckList);
-
-                    deckAdapter.notifyDataSetChanged();
+                    fullDeckList.clear();
+                    fullDeckList.addAll(response.body());
+                    deckAdapter.updateData(new ArrayList<>(fullDeckList)); // Pass a copy to the adapter
                     updateStats();
                 } else {
-                    Toast.makeText(DeckManagementActivity.this,
-                            "Không thể tải danh sách bộ từ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DeckManagementActivity.this, "Failed to load decks", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<BoTu>> call, Throwable t) {
-                showLoading(false);
-                Toast.makeText(DeckManagementActivity.this,
-                        "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<List<BoTu>> call, @NonNull Throwable t) {
+                Log.e(TAG, "API call failed: " + t.getMessage());
+                Toast.makeText(DeckManagementActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void updateStats() {
-        int total = deckList.size();
-        int published = 0;
-
-        for (BoTu deck : deckList) {
-            if ("Đã xuất bản".equals(deck.getTrangThai())) {
-                published++;
-            }
-        }
-
-        tvTotalDecks.setText(String.format("%,d", total));
-        tvPublished.setText(String.format("%,d", published));
-    }
-
-    private void setupSearchListener() {
-        etSearch.addTextChangedListener(new TextWatcher() {
+    private void setupSearch() {
+        etSearchDeck.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterDecks(s.toString());
+                searchDecks(s.toString());
             }
 
             @Override
@@ -141,80 +127,25 @@ public class DeckManagementActivity extends AppCompatActivity implements DeckAda
         });
     }
 
-    private void filterDecks(String query) {
-        filteredList.clear();
-
-        if (query.isEmpty()) {
-            filteredList.addAll(deckList);
-        } else {
-            String searchQuery = query.toLowerCase().trim();
-            for (BoTu deck : deckList) {
-                if (deck.getTenBoTu().toLowerCase().contains(searchQuery)) {
-                    filteredList.add(deck);
-                }
-            }
+    private void searchDecks(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            deckAdapter.updateData(new ArrayList<>(fullDeckList)); // Restore the full list
+            return;
         }
 
-        deckAdapter.notifyDataSetChanged();
-    }
-
-    private void showLoading(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        rvDecks.setVisibility(show ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    public void onViewClick(BoTu deck) {
-        Intent intent = new Intent(this, AddVocabularyActivity.class);
-        intent.putExtra("deck_id", deck.getId());
-        intent.putExtra("deck_name", deck.getTenBoTu());
-        intent.putExtra("view_only", true);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onEditClick(BoTu deck) {
-        Intent intent = new Intent(this, AddVocabularyActivity.class);
-        intent.putExtra("deck_id", deck.getId());
-        intent.putExtra("deck_name", deck.getTenBoTu());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onDeleteClick(BoTu deck) {
-        new AlertDialog.Builder(this)
-                .setTitle("Xác nhận xóa")
-                .setMessage("Bạn có chắc muốn xóa bộ từ \"" + deck.getTenBoTu() + "\"?")
-                .setPositiveButton("Xóa", (dialog, which) -> deleteDeck(deck))
-                .setNegativeButton("Hủy", null)
-                .show();
-    }
-
-    private void deleteDeck(BoTu deck) {
-        apiService.deleteBoTu(deck.getId()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(DeckManagementActivity.this,
-                            "Đã xóa bộ từ", Toast.LENGTH_SHORT).show();
-                    loadDecks();
-                } else {
-                    Toast.makeText(DeckManagementActivity.this,
-                            "Không thể xóa bộ từ", Toast.LENGTH_SHORT).show();
-                }
+        // No need to call API for search if you want to filter locally
+        List<BoTu> filteredList = new ArrayList<>();
+        for (BoTu deck : fullDeckList) {
+            if (deck.getTenChuDe().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(deck);
             }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(DeckManagementActivity.this,
-                        "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        }
+        deckAdapter.updateData(filteredList);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadDecks();
+    private void updateStats() {
+        int totalDecks = fullDeckList.size();
+        // Assuming all decks are published for now
+        tvDeckStats.setText(String.format("%d Tổng bộ từ • %d Đã xuất bản", totalDecks, totalDecks));
     }
 }
