@@ -23,12 +23,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.nhom1.polydeck.data.api.APIService;
 import com.nhom1.polydeck.data.api.RetrofitClient;
 import com.nhom1.polydeck.data.model.ApiResponse;
 import com.nhom1.polydeck.data.model.GoogleLoginRequest;
 import com.nhom1.polydeck.data.model.LoginRequest;
 import com.nhom1.polydeck.data.model.LoginResponse;
+import com.nhom1.polydeck.utils.SessionManager;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -3,6 +3,7 @@ package com.nhom1.polydeck.data.api;
 import com.nhom1.polydeck.data.model.AdminStats;
 import com.nhom1.polydeck.data.model.ApiResponse;
 import com.nhom1.polydeck.data.model.BoTu;
+import com.nhom1.polydeck.data.model.ForgotPasswordRequest;
 import com.nhom1.polydeck.data.model.GoogleLoginRequest;
 import com.nhom1.polydeck.data.model.LoginRequest;
 import com.nhom1.polydeck.data.model.LoginResponse;
@@ -31,12 +32,17 @@ public interface APIService {
     @POST("api/auth/google")
     Call<ApiResponse<LoginResponse>> googleLogin(@Body GoogleLoginRequest request);
 
-    // ============= ADMIN =============
+    @POST("api/auth/forgot-password")
+    Call<ApiResponse<Void>> forgotPassword(@Body ForgotPasswordRequest request);
+
+
+    // ============= ADMIN DASHBOARD =============
     @GET("api/admin/stats")
     Call<AdminStats> getAdminStats();
 
     @POST("api/admin/thong-bao")
     Call<Void> createSystemNotification(@Body ThongBao thongBao);
+
 
     // ============= USER MANAGEMENT =============
     @GET("api/users")
@@ -54,7 +60,8 @@ public interface APIService {
     @PUT("api/users/{id}/block")
     Call<Void> blockUser(@Path("id") String userId);
 
-    // ============= DECK (CHU DE) MANAGEMENT =============
+
+    // ============= DECK (CHUDE) MANAGEMENT =============
     @GET("api/chude")
     Call<List<BoTu>> getAllChuDe();
 
@@ -67,9 +74,12 @@ public interface APIService {
     @POST("api/chude")
     Call<BoTu> createChuDe(@Body BoTu boTu);
 
+
+    // Add Deck with Image
     @Multipart
     @POST("api/chude/chude_with_image")
-    Call<BoTu> createChuDeWithImage(@Part MultipartBody.Part file, @Part("ten_chu_de") RequestBody tenChuDe);
+    Call<BoTu> createChuDeWithImage(@Part MultipartBody.Part file,
+                                    @Part("ten_chu_de") RequestBody tenChuDe);
 
     @PUT("api/chude/{id}")
     Call<BoTu> updateChuDe(@Path("id") String chuDeId, @Body BoTu boTu);
@@ -77,11 +87,11 @@ public interface APIService {
     @DELETE("api/chude/{id}")
     Call<Void> deleteChuDe(@Path("id") String chuDeId);
 
-    // ============= VOCABULARY MANAGEMENT =============
+
+    // ============= VOCABULARY =============
     @POST("api/chude/{chuDeId}/them-tu-vung")
     Call<TuVung> addTuVungToChuDe(@Path("chuDeId") String chuDeId, @Body TuVung tuVung);
 
-    // FIX: Added method to get vocabulary by deck
     @GET("api/chude/{chuDeId}/tuvung")
     Call<List<TuVung>> getTuVungByBoTu(@Path("chuDeId") String chuDeId);
 }
