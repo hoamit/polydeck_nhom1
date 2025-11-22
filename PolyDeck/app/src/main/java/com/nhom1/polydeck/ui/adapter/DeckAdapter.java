@@ -1,118 +1,143 @@
 package com.nhom1.polydeck.ui.adapter;
+
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-
+import com.bumptech.glide.Glide;
 import com.nhom1.polydeck.R;
+import com.nhom1.polydeck.data.api.APIService;
+import com.nhom1.polydeck.data.api.RetrofitClient;
 import com.nhom1.polydeck.data.model.BoTu;
+import com.nhom1.polydeck.ui.activity.EditDeckActivity;
+import com.nhom1.polydeck.ui.activity.VocabularyListActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder> {
 
-    private Context context;
     private List<BoTu> deckList;
-    private OnDeckClickListener listener;
+    private Context context;
+    private APIService apiService;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    public interface OnDeckClickListener {
-        void onViewClick(BoTu deck);
-        void onEditClick(BoTu deck);
-        void onDeleteClick(BoTu deck);
-    }
-
-    public DeckAdapter(Context context, List<BoTu> deckList, OnDeckClickListener listener) {
+    public DeckAdapter(Context context, List<BoTu> deckList) {
         this.context = context;
         this.deckList = deckList;
-        this.listener = listener;
+        this.apiService = RetrofitClient.getApiService();
     }
 
     @NonNull
     @Override
     public DeckViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_deck, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_deck, parent, false);
         return new DeckViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DeckViewHolder holder, int position) {
         BoTu deck = deckList.get(position);
+        if (deck == null) return;
 
-        setDeckColor(holder.flIcon, deck.getMauSac());
+        holder.tvDeckName.setText(deck.getTenChuDe());
 
-        holder.tvDeckName.setText(deck.getTenBoTu());
-        holder.tvDeckInfo.setText(String.format("%d từ • %d người dùng • %s",
-                deck.getSoTu(), deck.getSoNguoiDung(), deck.getNgayTao()));
+        String stats = String.format(Locale.getDefault(), "%d từ • %d người dùng • %s",
+                deck.getSoLuongQuiz(),
+                deck.getSoNguoiDung(),
+                deck.getNgayTao() != null ? sdf.format(deck.getNgayTao()) : "N/A");
+        holder.tvDeckStatsItem.setText(stats);
 
-        if ("Đã xuất bản".equals(deck.getTrangThai())) {
-            holder.tvStatus.setText("Đã xuất bản");
-            holder.tvStatus.setTextColor(Color.parseColor("#10B981"));
-            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_active);
-        } else {
-            holder.tvStatus.setText("Nháp");
-            holder.tvStatus.setTextColor(Color.parseColor("#6B7280"));
-            holder.tvStatus.setBackgroundResource(R.drawable.bg_edittext);
-        }
+        Glide.with(context)
+                .load(deck.getLinkAnhIcon())
+                .placeholder(R.drawable.ic_default_deck_icon)
+                .error(R.drawable.ic_default_deck_icon)
+                .into(holder.ivDeckIcon);
 
-        holder.btnView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onViewClick(deck);
-            }
+        // FIX: Set listener for the whole item view to see vocabulary
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, VocabularyListActivity.class);
+            intent.putExtra(VocabularyListActivity.EXTRA_DECK_ID, deck.getId());
+            intent.putExtra(VocabularyListActivity.EXTRA_DECK_NAME, deck.getTenChuDe());
+            context.startActivity(intent);
         });
 
-        holder.btnEdit.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onEditClick(deck);
-            }
+        holder.btnDeleteDeck.setOnClickListener(v -> showDeleteConfirmationDialog(deck, position));
+        holder.btnEditDeck.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EditDeckActivity.class);
+            intent.putExtra("DECK_ID", deck.getId());
+            context.startActivity(intent);
         });
+    }
 
-        holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onDeleteClick(deck);
+    private void showDeleteConfirmationDialog(BoTu deck, int position) {
+        new AlertDialog.Builder(context)
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc chắn muốn xóa bộ từ '" + deck.getTenChuDe() + "'?")
+                .setPositiveButton("Xóa", (dialog, which) -> deleteDeck(deck, position))
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void deleteDeck(BoTu deck, int position) {
+        apiService.deleteChuDe(deck.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, "Đã xóa bộ từ", Toast.LENGTH_SHORT).show();
+                    deckList.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, deckList.size());
+                } else {
+                    Toast.makeText(context, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(context, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return deckList.size();
+        return deckList != null ? deckList.size() : 0;
     }
 
-    private void setDeckColor(FrameLayout frameLayout, String colorHex) {
-        try {
-            GradientDrawable drawable = new GradientDrawable();
-            drawable.setShape(GradientDrawable.RECTANGLE);
-            drawable.setColor(Color.parseColor(colorHex));
-            drawable.setCornerRadius(12 * context.getResources().getDisplayMetrics().density);
-            frameLayout.setBackground(drawable);
-        } catch (Exception e) {
-            frameLayout.setBackgroundResource(R.drawable.rounded_bg);
-        }
+    public void updateData(List<BoTu> newList) {
+        this.deckList = newList;
+        notifyDataSetChanged();
     }
 
-    public static class DeckViewHolder extends RecyclerView.ViewHolder {
-        FrameLayout flIcon;
-        TextView tvDeckName, tvDeckInfo, tvStatus;
-        Button btnView, btnEdit, btnDelete;
+    static class DeckViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivDeckIcon;
+        TextView tvDeckName, tvDeckStatsItem;
+        ImageButton btnEditDeck, btnDeleteDeck;
 
         public DeckViewHolder(@NonNull View itemView) {
             super(itemView);
-            flIcon = itemView.findViewById(R.id.flIcon);
+            ivDeckIcon = itemView.findViewById(R.id.ivDeckIcon);
             tvDeckName = itemView.findViewById(R.id.tvDeckName);
-            tvDeckInfo = itemView.findViewById(R.id.tvDeckInfo);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
-            btnView = itemView.findViewById(R.id.btnView);
-            btnEdit = itemView.findViewById(R.id.btnEdit);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
+            tvDeckStatsItem = itemView.findViewById(R.id.tvDeckStatsItem);
+            btnEditDeck = itemView.findViewById(R.id.btnEditDeck);
+            btnDeleteDeck = itemView.findViewById(R.id.btnDeleteDeck);
         }
     }
 }

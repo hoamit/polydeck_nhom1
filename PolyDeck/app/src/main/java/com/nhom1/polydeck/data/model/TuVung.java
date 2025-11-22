@@ -6,48 +6,69 @@ public class TuVung {
     @SerializedName("_id")
     private String id;
 
-    @SerializedName("tu_vung")
-    private String tuVung;
+    @SerializedName("tu_tieng_anh")
+    private String tuTiengAnh;
 
     @SerializedName("phien_am")
     private String phienAm;
 
-    @SerializedName("nghia")
-    private String nghia;
+    @SerializedName("nghia_tieng_viet")
+    private String nghiaTiengViet;
 
-    @SerializedName("vi_du")
-    private String viDu;
+    @SerializedName("cau_vi_du")
+    private String cauViDu;
 
-    @SerializedName("bo_tu_id")
-    private String boTuId;
+    @SerializedName("ma_chu_de")
+    private String maChuDe;
 
     public TuVung() {}
 
-    public TuVung(String id, String tuVung, String phienAm, String nghia, String viDu, String boTuId) {
-        this.id = id;
-        this.tuVung = tuVung;
-        this.phienAm = phienAm;
-        this.nghia = nghia;
-        this.viDu = viDu;
-        this.boTuId = boTuId;
+    // Getters & Setters
+    public String getId() {
+        return id;
     }
 
-    // Getters & Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getTuVung() { return tuVung; }
-    public void setTuVung(String tuVung) { this.tuVung = tuVung; }
+    public String getTuTiengAnh() {
+        return tuTiengAnh;
+    }
 
-    public String getPhienAm() { return phienAm; }
-    public void setPhienAm(String phienAm) { this.phienAm = phienAm; }
+    public void setTuTiengAnh(String tuTiengAnh) {
+        this.tuTiengAnh = tuTiengAnh;
+    }
 
-    public String getNghia() { return nghia; }
-    public void setNghia(String nghia) { this.nghia = nghia; }
+    public String getPhienAm() {
+        return phienAm;
+    }
 
-    public String getViDu() { return viDu; }
-    public void setViDu(String viDu) { this.viDu = viDu; }
+    public void setPhienAm(String phienAm) {
+        this.phienAm = phienAm;
+    }
 
-    public String getBoTuId() { return boTuId; }
-    public void setBoTuId(String boTuId) { this.boTuId = boTuId; }
+    public String getNghiaTiengViet() {
+        return nghiaTiengViet;
+    }
+
+    public void setNghiaTiengViet(String nghiaTiengViet) {
+        this.nghiaTiengViet = nghiaTiengViet;
+    }
+
+    public String getCauViDu() {
+        return cauViDu;
+    }
+
+    public void setCauViDu(String cauViDu) {
+        this.cauViDu = cauViDu;
+    }
+
+    public String getMaChuDe() {
+        return maChuDe;
+    }
+
+    public void setMaChuDe(String maChuDe) {
+        this.maChuDe = maChuDe;
+    }
 }
