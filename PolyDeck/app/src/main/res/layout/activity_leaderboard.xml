@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FDB022">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back"
+            android:background="@drawable/bg_circle_white"
+            android:tint="#FDB022"
+            android:padding="10dp"
+            android:contentDescription="Back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Bảng xếp hạng"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
+    </RelativeLayout>
+
+    <!-- Top 3 Podium -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="30dp">
+
+        <!-- Rank 2 (Left) -->
+        <LinearLayout
+            android:id="@+id/rank2Container"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="20dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Avatar with Badge -->
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvRank2Avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/bg_circle_white"
+                    android:gravity="center"
+                    android:text="F"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#FDB022"/>
+
+                <!-- Badge số 2 -->
+                <TextView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/bg_circle_gray"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+            </RelativeLayout>
+
+            <!-- Name -->
+            <TextView
+                android:id="@+id/tvRank2Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="feds"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- Podium -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/tvRank2XP"
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_podium_2"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#111827"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="XP"
+                    android:textSize="9sp"
+                    android:textColor="#9CA3AF"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Rank 1 (Center - Highest) -->
+        <LinearLayout
+            android:id="@+id/rank1Container"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Avatar with Badge -->
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvRank1Avatar"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bg_circle_white"
+                    android:gravity="center"
+                    android:text="TB"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#FDB022"/>
+
+                <!-- Badge số 1 -->
+                <TextView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/bg_circle_gold"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+            </RelativeLayout>
+
+            <!-- Name -->
+            <TextView
+                android:id="@+id/tvRank1Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tran Van B"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- Podium -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/tvRank1XP"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/bg_podium_1"
+                    android:gravity="center"
+                    android:text="2450"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#111827"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="XP"
+                    android:textSize="10sp"
+                    android:textColor="#9CA3AF"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Rank 3 (Right) -->
+        <LinearLayout
+            android:id="@+id/rank3Container"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Avatar with Badge -->
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvRank3Avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/bg_circle_white"
+                    android:gravity="center"
+                    android:text="SM"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#FDB022"/>
+
+                <!-- Badge số 3 -->
+                <TextView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/bg_circle_bronze"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+            </RelativeLayout>
+
+            <!-- Name (2 dòng) -->
+            <TextView
+                android:id="@+id/tvRank3Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sophia miles\nmiller"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
+            <!-- Podium -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/tvRank3XP"
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_podium_3"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#111827"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="XP"
+                    android:textSize="9sp"
+                    android:textColor="#9CA3AF"/>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Bottom List (Rank 4+) -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewLeaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:clipToPadding="false"
+            android:background="#FFFFFF"/>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

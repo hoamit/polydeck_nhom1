@@ -27,6 +27,9 @@ public class User {
     @SerializedName("trang_thai")
     private String trangThai;
 
+    @SerializedName("chuoi_ngay_hoc")
+    private int chuoiNgayHoc;
+
     public User() {}
 
     public String getId() { return id; }
@@ -52,6 +55,9 @@ public class User {
 
     public String getTrangThai() { return trangThai; }
     public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
+
+    public int getChuoiNgayHoc() { return chuoiNgayHoc; }
+    public void setChuoiNgayHoc(int chuoiNgayHoc) { this.chuoiNgayHoc = chuoiNgayHoc; }
 
     public String getInitials() {
         if (hoTen == null || hoTen.isEmpty()) return "?";

@@ -220,10 +220,10 @@ public class LoginActivity extends AppCompatActivity {
                         String message = apiResponse.getMessage();
                         if (message == null || message.trim().isEmpty()) {
                             message = "Đăng nhập thất bại";
-                        }
+                    }
                         if (isCredentialErrorMessage(message)) {
                             showCredentialError(message);
-                        } else {
+                } else {
                             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                         }
                     }

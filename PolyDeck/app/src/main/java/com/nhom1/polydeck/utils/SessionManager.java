@@ -49,7 +49,16 @@ public class SessionManager {
 
     // Lấy email
     public String getEmail() {
-        return pref.getString(KEY_EMAIL, null);
+        String email = pref.getString(KEY_EMAIL, null);
+        if (email == null || email.isEmpty()) {
+            LoginResponse user = getUserData();
+            if (user != null && user.getEmail() != null && !user.getEmail().isEmpty()) {
+                email = user.getEmail();
+                editor.putString(KEY_EMAIL, email);
+                editor.apply();
+            }
+        }
+        return email;
     }
 
     // Lấy vai trò
@@ -78,6 +87,7 @@ public class SessionManager {
         return pref.getString(KEY_PASSWORD, null);
     }
 }
+
 
 
 

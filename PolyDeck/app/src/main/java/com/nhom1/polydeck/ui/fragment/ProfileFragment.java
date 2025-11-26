@@ -59,8 +59,10 @@ public class ProfileFragment extends Fragment {
             Intent intent = new Intent(requireContext(), com.nhom1.polydeck.ui.activity.SettingsActivity.class);
             startActivity(intent);
         });
-        view.findViewById(R.id.row_ranking).setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Bảng xếp hạng", Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.row_ranking).setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.nhom1.polydeck.ui.activity.LeaderboardActivity.class);
+            startActivity(intent);
+        });
         view.findViewById(R.id.row_support).setOnClickListener(v ->
                 Toast.makeText(requireContext(), "Hỗ trợ", Toast.LENGTH_SHORT).show());
         view.findViewById(R.id.row_logout).setOnClickListener(v -> {

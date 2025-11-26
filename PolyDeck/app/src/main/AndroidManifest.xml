@@ -17,12 +17,14 @@
         android:theme="@style/Theme.PolyDeck"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.activity.LeaderboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.ChangePasswordActivity"
-            android:exported="false" />
-        <!-- Welcome & Auth -->
+            android:exported="false" /> <!-- Welcome & Auth -->
         <activity
             android:name=".ui.activity.WelcomeActivity"
             android:exported="true">
