@@ -149,9 +149,6 @@ public interface APIService {
     @DELETE("api/quizzes/{id}")
     Call<Void> deleteQuiz(@Path("id") String quizId);
 
-    @GET("api/quizzes")
-    Call<List<BaiQuiz>> getAllQuizzes();
-
     @GET("api/quizzes/by-topic/{chuDeId}")
     Call<ApiResponse<QuizBundle>> getQuizByTopic(@Path("chuDeId") String deckId);
 
